@@ -57,12 +57,9 @@ class RobotProvider extends ChangeNotifier {
       _isConfigLoaded = true;
 
       if (config != null) {
-        print('[RobotProvider] 配置加载成功: ${config.name}');
         // 立即检查一次状态
         await checkRobotState();
-      } else {
-        print('[RobotProvider] 未找到保存的配置');
-      }
+      } else {}
 
       notifyListeners();
     } catch (error) {

@@ -33,9 +33,9 @@ class RobotStatus extends StatelessWidget {
       shadowColor: colorScheme.shadow.withOpacity(0.3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -95,7 +95,7 @@ class RobotStatus extends StatelessWidget {
 
             // 状态信息
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: _getStatusBackgroundColor(colorScheme),
                 borderRadius: BorderRadius.circular(12),
@@ -161,7 +161,7 @@ class RobotStatus extends StatelessWidget {
             if (robotState == RobotState.unknown && robotIp != null)
               Container(
                 margin: const EdgeInsets.only(top: 12),
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: colorScheme.errorContainer.withOpacity(0.7),
                   borderRadius: BorderRadius.circular(8),

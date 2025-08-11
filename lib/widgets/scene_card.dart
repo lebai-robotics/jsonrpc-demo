@@ -33,7 +33,7 @@ class SceneCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
       child: AspectRatio(
-        aspectRatio: 3 / 5, // 3:2 比例
+        aspectRatio: 3 / 2, // 3:2 比例
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -58,11 +58,13 @@ class SceneCard extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                       colors: [
-                        Colors.transparent,
-                        colorScheme.surface.withOpacity(0.8),
+                        colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.8,
+                        ),
+                        colorScheme.surfaceContainer.withValues(alpha: 0.8),
                       ],
                     ),
                   ),
@@ -202,7 +204,7 @@ class SceneCard extends StatelessWidget {
                                 ? Colors.red
                                 : colorScheme.outline,
                             foregroundColor: colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -253,11 +255,11 @@ class SceneCard extends StatelessWidget {
             image: FileImage(File(imagePath)),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              colorScheme.surface.withOpacity(0.7),
+              colorScheme.surface.withValues(alpha: 0.7),
               BlendMode.overlay,
             ),
             onError: (exception, stackTrace) {
-              print('加载场景图片失败: $imagePath, $exception');
+              debugPrint('加载场景图片失败: $imagePath, $exception');
             },
           ),
         ),
@@ -270,7 +272,7 @@ class SceneCard extends StatelessWidget {
             image: AssetImage(imagePath),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              colorScheme.surface.withOpacity(0.7),
+              colorScheme.surface.withValues(alpha: 0.7),
               BlendMode.overlay,
             ),
             onError: (exception, stackTrace) {
@@ -322,7 +324,7 @@ class AddSceneCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: colorScheme.primaryContainer.withOpacity(0.7),
                     shape: BoxShape.circle,

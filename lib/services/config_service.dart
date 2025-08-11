@@ -21,6 +21,7 @@ class ConfigService {
 
     _prefs = await SharedPreferences.getInstance();
     _initialized = true;
+    return Future.value();
   }
 
   /// 确保已初始化
@@ -58,18 +59,14 @@ class ConfigService {
     try {
       final configJson = _prefs.getString(_configKey);
 
-      if (configJson == null || configJson.isEmpty) {
-        print('[ConfigService] 未找到保存的配置');
+      if (configJson == null || configJson.isEmpty || configJson == '') {
         return null;
       }
 
       final configData = jsonDecode(configJson) as Map<String, dynamic>;
       final config = RobotConfig.fromJson(configData);
-
-      print('[ConfigService] 配置加载成功: ${config.name}');
       return config;
     } catch (error) {
-      print('[ConfigService] 加载配置时发生错误: $error');
       return null;
     }
   }

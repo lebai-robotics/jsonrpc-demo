@@ -132,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
     RobotProvider robotProvider,
   ) {
     if (!robotProvider.isConfigLoaded) {
-      // FIXME: 配置加载中.现在很慢。。。
       return const Center(child: SimpleLoading(message: '正在加载配置...', size: 32));
     }
 

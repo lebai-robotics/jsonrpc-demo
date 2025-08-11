@@ -194,6 +194,16 @@ class RobotStatus extends StatelessWidget {
   /// 获取状态文本
   String _getStatusText() {
     switch (robotState) {
+      case RobotState.booting:
+        return '启动中 - 机器人正在启动';
+      case RobotState.starting:
+        return '启动中 - 机器人正在启动';
+      case RobotState.stopping:
+        return '停止中 - 机器人正在停止';
+      case RobotState.updating:
+        return '更新中 - 机器人正在更新';
+      case RobotState.robotOn:
+        return '初始化完成';
       case RobotState.idle:
         return '空闲 - 准备就绪';
       case RobotState.running:
@@ -207,6 +217,10 @@ class RobotStatus extends StatelessWidget {
       case RobotState.disabled:
         return '未启用 - 机器人未启用';
       case RobotState.unknown:
+        return '未知情况';
+      case RobotState.teaching:
+        return '示教中 - 机器人正在示教';
+      case RobotState.disconnected:
         return '离线 - 无法连接到机器人';
     }
   }
@@ -214,6 +228,16 @@ class RobotStatus extends StatelessWidget {
   /// 获取状态颜色
   Color _getStatusColor(ColorScheme colorScheme) {
     switch (robotState) {
+      case RobotState.booting:
+        return Colors.yellowAccent;
+      case RobotState.starting:
+        return Colors.deepOrangeAccent;
+      case RobotState.stopping:
+        return Colors.blueGrey;
+      case RobotState.updating:
+        return Colors.deepPurpleAccent;
+      case RobotState.robotOn:
+        return Colors.yellowAccent;
       case RobotState.idle:
         return Colors.green;
       case RobotState.running:
@@ -228,12 +252,26 @@ class RobotStatus extends StatelessWidget {
         return colorScheme.outline;
       case RobotState.unknown:
         return colorScheme.outline;
+      case RobotState.teaching:
+        return Colors.purple;
+      case RobotState.disconnected:
+        return colorScheme.outline;
     }
   }
 
   /// 获取状态背景颜色
   Color _getStatusBackgroundColor(ColorScheme colorScheme) {
     switch (robotState) {
+      case RobotState.booting:
+        return Colors.yellowAccent.withOpacity(0.1);
+      case RobotState.starting:
+        return Colors.deepOrangeAccent.withOpacity(0.1);
+      case RobotState.stopping:
+        return Colors.blueGrey.withOpacity(0.1);
+      case RobotState.updating:
+        return Colors.deepPurpleAccent.withOpacity(0.1);
+      case RobotState.robotOn:
+        return Colors.yellowAccent.withOpacity(0.1);
       case RobotState.idle:
         return Colors.green.withOpacity(0.1);
       case RobotState.running:
@@ -247,6 +285,10 @@ class RobotStatus extends StatelessWidget {
       case RobotState.disabled:
         return colorScheme.surfaceContainerHighest;
       case RobotState.unknown:
+        return colorScheme.surfaceContainerHighest;
+      case RobotState.teaching:
+        return Colors.purple.withOpacity(0.1);
+      case RobotState.disconnected:
         return colorScheme.surfaceContainerHighest;
     }
   }
@@ -310,6 +352,16 @@ class RobotStatusCard extends StatelessWidget {
 
   Color _getStatusColor(ColorScheme colorScheme) {
     switch (state) {
+      case RobotState.booting:
+        return Colors.yellowAccent;
+      case RobotState.starting:
+        return Colors.deepOrangeAccent;
+      case RobotState.stopping:
+        return Colors.blueGrey;
+      case RobotState.updating:
+        return Colors.deepPurpleAccent;
+      case RobotState.robotOn:
+        return Colors.yellowAccent;
       case RobotState.idle:
         return Colors.green;
       case RobotState.running:
@@ -322,7 +374,11 @@ class RobotStatusCard extends StatelessWidget {
         return Colors.red;
       case RobotState.disabled:
         return colorScheme.outline;
+      case RobotState.teaching:
+        return Colors.deepPurpleAccent;
       case RobotState.unknown:
+        return colorScheme.outline;
+      case RobotState.disconnected:
         return colorScheme.outline;
     }
   }

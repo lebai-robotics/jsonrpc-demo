@@ -24,6 +24,9 @@ class RobotProvider extends ChangeNotifier {
   // 配置加载状态
   bool _isConfigLoaded = false;
 
+  // 当前有串行任务执行
+  bool _hasSerialTaskRunning = false;
+
   RobotProvider(this._configService, this._rpcClient) {
     _initialize();
   }
@@ -35,6 +38,7 @@ class RobotProvider extends ChangeNotifier {
   bool get isConfigLoaded => _isConfigLoaded;
   bool get hasConfig => _robotConfig != null;
   bool get isOnline => _robotState != RobotState.unknown;
+  bool get hasSerialTaskRunning => _hasSerialTaskRunning;
 
   List<SceneButton> get scenes => _robotConfig?.scenes ?? [];
 
@@ -232,6 +236,31 @@ class RobotProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> checkRunningTasks() async {
+    try {
+      final tasks = await _rpcClient.getRunningTasks(
+        _robotConfig!.ip,
+        _robotConfig!.port,
+      );
+      print('[RobotProvider] 正在执行的任务列表: $tasks');
+      if (tasks.isNotEmpty) {
+        for (var task in tasks) {
+          if (task['is_parallel'] == false) {
+            _hasSerialTaskRunning = true;
+            break;
+          }
+        }
+      } else {
+        _hasSerialTaskRunning = false;
+      }
+      return Future.value();
+    } catch (error) {
+      _hasSerialTaskRunning = false;
+      print('[RobotProvider] 检查正在执行的任务列表失败: $error');
+      return Future.value();
+    }
+  }
+
   /// 更新机器人状态
   void _updateRobotState(RobotState newState) {
     if (_robotState != newState) {
@@ -247,10 +276,10 @@ class RobotProvider extends ChangeNotifier {
   void _startStatusCheck() {
     _statusCheckTimer?.cancel();
 
-    _statusCheckTimer = Timer.periodic(
-      const Duration(seconds: 10),
-      (_) => checkRobotState(),
-    );
+    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      checkRobotState();
+      checkRunningTasks();
+    });
 
     print('[RobotProvider] 定时状态检查已启动');
   }
@@ -280,19 +309,33 @@ class RobotProvider extends ChangeNotifier {
   /// 获取状态显示文本
   String getStateText() {
     switch (_robotState) {
+      case RobotState.booting:
+        return '启动中';
+      case RobotState.starting:
+        return '启动中';
+      case RobotState.stopping:
+        return '停止中';
+      case RobotState.updating:
+        return '更新中';
+      case RobotState.robotOn:
+        return '初始化完成';
       case RobotState.idle:
         return '空闲';
       case RobotState.running:
         return '运行中';
       case RobotState.paused:
         return '暂停';
+      case RobotState.unknown:
+        return '未知';
       case RobotState.stopped:
         return '已停止';
       case RobotState.error:
         return '错误';
       case RobotState.disabled:
         return '未启用';
-      case RobotState.unknown:
+      case RobotState.teaching:
+        return '示教中';
+      case RobotState.disconnected:
         return '离线';
     }
   }
@@ -300,6 +343,16 @@ class RobotProvider extends ChangeNotifier {
   /// 获取状态颜色
   String getStateColor() {
     switch (_robotState) {
+      case RobotState.booting:
+        return 'purple';
+      case RobotState.starting:
+        return 'purple';
+      case RobotState.stopping:
+        return 'purple';
+      case RobotState.updating:
+        return 'purple';
+      case RobotState.robotOn:
+        return 'purple';
       case RobotState.idle:
         return 'green';
       case RobotState.running:
@@ -312,7 +365,13 @@ class RobotProvider extends ChangeNotifier {
         return 'red';
       case RobotState.disabled:
         return 'gray';
+      case RobotState.teaching:
+        return 'blue';
+      case RobotState.disconnected:
+        return 'gray';
       case RobotState.unknown:
+        return 'gray';
+      case RobotState.disconnected:
         return 'gray';
     }
   }

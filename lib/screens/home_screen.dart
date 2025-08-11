@@ -7,6 +7,7 @@ import '../providers/robot_provider.dart';
 import '../widgets/robot_status.dart';
 import '../widgets/scene_card.dart';
 import '../widgets/loading_overlay.dart';
+import '../services/jsonrpc_client.dart';
 import 'config_screen.dart';
 
 /// 首页界面
@@ -239,7 +240,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return SceneCard(
             scene: scene,
-            isEnabled: !isTaskRunning && isRobotOnline,
+            isEnabled:
+                !isTaskRunning &&
+                !robotProvider.hasSerialTaskRunning &&
+                isRobotOnline &&
+                robotProvider.robotState != RobotState.teaching,
             isExecuting: isExecuting,
             onExecute: () =>
                 _executeScene(context, scene, appState, robotProvider),

@@ -35,13 +35,20 @@ class JsonRpcError implements Exception {
 
 /// 机器人状态枚举
 enum RobotState {
+  booting, // 启动中
+  starting, // 启动中
+  stopping, // 停止中
+  robotOn, // 机器人在线
   idle, // 空闲
   running, // 运行中
   paused, // 暂停
   stopped, // 停止
   error, // 错误
   disabled, // 禁用
+  teaching, // 示教中
   unknown, // 未知
+  disconnected, // 断开连接
+  updating, // 更新中
 }
 
 /// 乐白机械臂JSON-RPC客户端
@@ -164,10 +171,12 @@ class JsonRpcClient {
   /// 获取机器人状态
   Future<RobotState> getRobotState(String ip, int port) async {
     try {
+      print('[JsonRPC] 当前IP: $ip:$port');
       final result = await sendRequest(ip, port, 'get_robot_state', []);
 
       // 处理返回结果，可能是字符串或数字
       final state = result is Map ? result['state'] : result;
+      print('[JsonRPC] 当前状态: $state');
       return _parseRobotState(state);
     } catch (error) {
       print('[JsonRPC] 获取机器人状态失败: $ip:$port - $error');
@@ -175,30 +184,50 @@ class JsonRpcClient {
     }
   }
 
+  /// 查询正在执行的任务列表
+  Future<List<dynamic>> getRunningTasks(String ip, int port) async {
+    try {
+      final res = await sendRequest(ip, port, 'load_running_tasks', []);
+      if (res['tasks'] is List) {
+        return res['tasks'] as List<dynamic>;
+      }
+      return [];
+    } catch (error) {
+      print('[JsonRPC] 查询正在执行的任务列表失败: $ip:$port - $error');
+      return [];
+    }
+  }
+
   /// 解析机器人状态
   RobotState _parseRobotState(dynamic state) {
     if (state is String) {
       switch (state.toUpperCase()) {
+        case 'BOOTING':
+          return RobotState.booting;
+        case 'STARTING':
+          return RobotState.starting;
+        case 'STOPPING':
+          return RobotState.stopping;
+        case 'ROBOT_ON':
+          return RobotState.robotOn;
         case 'IDLE':
-        case 'STANDBY':
           return RobotState.idle;
-        case 'RUNNING':
         case 'MOVING':
-        case 'BUSY':
           return RobotState.running;
         case 'PAUSED':
-        case 'PAUSE':
           return RobotState.paused;
-        case 'STOPPED':
+        case 'UPDATING':
+          return RobotState.updating;
+        case 'ESTOP':
+          return RobotState.stopped;
         case 'STOP':
           return RobotState.stopped;
-        case 'ERROR':
-        case 'FAULT':
-        case 'EMERGENCY':
-          return RobotState.error;
-        case 'DISABLED':
-        case 'POWEROFF':
+        case 'DISCONNECTED':
+          return RobotState.disconnected;
+        case 'ROBOT_OFF':
           return RobotState.disabled;
+        case 'TEACHING':
+          return RobotState.teaching;
         default:
           return RobotState.unknown;
       }

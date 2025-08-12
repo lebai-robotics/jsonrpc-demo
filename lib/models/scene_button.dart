@@ -5,12 +5,14 @@ class SceneButton {
   final String name;
   final String sceneId;
   final String? imagePath;
+  final String? params;
 
   const SceneButton({
     required this.id,
     required this.name,
     required this.sceneId,
     this.imagePath,
+    this.params,
   });
 
   /// 从JSON创建SceneButton实例
@@ -40,12 +42,14 @@ class SceneButton {
     String? sceneId,
     String? imagePath,
     bool clearImagePath = false,
+    String? params,
   }) {
     return SceneButton(
       id: id ?? this.id,
       name: name ?? this.name,
       sceneId: sceneId ?? this.sceneId,
       imagePath: clearImagePath ? null : (imagePath ?? this.imagePath),
+      params: params ?? this.params,
     );
   }
 

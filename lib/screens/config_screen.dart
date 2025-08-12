@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/robot_config.dart';
@@ -33,6 +34,7 @@ class _ConfigScreenState extends State<ConfigScreen>
   final _sceneFormKey = GlobalKey<FormState>();
   late TextEditingController _sceneNameController;
   late TextEditingController _sceneIdController;
+  late TextEditingController _sceneParamsController;
 
   String? _editingSceneId; // 正在编辑的场景ID
   bool _isLoading = false;
@@ -48,6 +50,7 @@ class _ConfigScreenState extends State<ConfigScreen>
     _portController = TextEditingController();
     _sceneNameController = TextEditingController();
     _sceneIdController = TextEditingController();
+    _sceneParamsController = TextEditingController();
 
     // 如果有初始场景ID，切换到场景配置标签页
     if (widget.initialSceneId != null) {
@@ -66,6 +69,7 @@ class _ConfigScreenState extends State<ConfigScreen>
     _portController.dispose();
     _sceneNameController.dispose();
     _sceneIdController.dispose();
+    _sceneParamsController.dispose();
     super.dispose();
   }
 
@@ -401,18 +405,18 @@ class _ConfigScreenState extends State<ConfigScreen>
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            Icons.smart_toy_outlined,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
-          ),
-        ),
+        contentPadding: const EdgeInsets.all(8),
+        // leading: Container(
+        //   padding: const EdgeInsets.all(8),
+        //   decoration: BoxDecoration(
+        //     color: Theme.of(context).colorScheme.primaryContainer,
+        //     borderRadius: BorderRadius.circular(8),
+        //   ),
+        //   child: Icon(
+        //     Icons.smart_toy_outlined,
+        //     color: Theme.of(context).colorScheme.onPrimaryContainer,
+        //   ),
+        // ),
         title: Text(
           scene.name,
           style: Theme.of(
@@ -435,6 +439,14 @@ class _ConfigScreenState extends State<ConfigScreen>
               icon: const Icon(Icons.edit),
               tooltip: '编辑',
             ),
+            // IconButton(
+            //   icon: SvgPicture.asset(
+            //     'assets/icons/params.svg',
+            //     width: 24,
+            //     height: 24,
+            //   ),
+            //   onPressed: () => _editParams(context, scene, robotProvider),
+            // ),
             IconButton(
               onPressed: () => _deleteScene(context, scene, robotProvider),
               icon: const Icon(Icons.delete),
@@ -505,6 +517,7 @@ class _ConfigScreenState extends State<ConfigScreen>
   ) async {
     _sceneNameController.clear();
     _sceneIdController.clear();
+    _sceneParamsController.clear();
     _editingSceneId = null;
 
     return showDialog<void>(
@@ -520,6 +533,7 @@ class _ConfigScreenState extends State<ConfigScreen>
 
     _sceneNameController.text = scene.name;
     _sceneIdController.text = scene.sceneId;
+    _sceneParamsController.text = scene.params ?? '';
     _editingSceneId = sceneId;
 
     showDialog<void>(
@@ -535,7 +549,7 @@ class _ConfigScreenState extends State<ConfigScreen>
     return AlertDialog(
       title: Text(
         isEditing ? '编辑场景' : '添加场景',
-        style: const TextStyle(fontSize: 32),
+        style: const TextStyle(fontSize: 24),
       ),
       content: SizedBox(
         width: 400,
@@ -578,6 +592,16 @@ class _ConfigScreenState extends State<ConfigScreen>
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                maxLines: 1,
+                controller: _sceneParamsController,
+                decoration: const InputDecoration(
+                  labelText: '场景参数（目前只支持输入一个字符串参数）',
+                  hintText: '请输入场景参数',
+                  border: OutlineInputBorder(),
+                ),
+              ),
             ],
           ),
         ),
@@ -585,13 +609,13 @@ class _ConfigScreenState extends State<ConfigScreen>
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消', style: TextStyle(fontSize: 26)),
+          child: const Text('取消', style: TextStyle(fontSize: 16)),
         ),
         ElevatedButton(
           onPressed: () => _saveScene(context, robotProvider),
           child: Text(
             isEditing ? '保存' : '添加',
-            style: const TextStyle(fontSize: 26),
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       ],
@@ -608,6 +632,7 @@ class _ConfigScreenState extends State<ConfigScreen>
     try {
       final name = _sceneNameController.text.trim();
       final sceneId = _sceneIdController.text.trim();
+      final params = _sceneParamsController.text.trim();
 
       if (_editingSceneId != null) {
         // 编辑场景
@@ -615,6 +640,7 @@ class _ConfigScreenState extends State<ConfigScreen>
           _editingSceneId!,
           name: name,
           newSceneId: sceneId,
+          params: params,
         );
       } else {
         // 添加场景

@@ -115,7 +115,9 @@ class RobotStatus extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: _getStatusColor(colorScheme).withOpacity(0.5),
+                          color: _getStatusColor(
+                            colorScheme,
+                          ).withValues(alpha: 0.5),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),

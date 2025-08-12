@@ -204,7 +204,7 @@ class SceneCard extends StatelessWidget {
                                 ? Colors.red
                                 : colorScheme.outline,
                             foregroundColor: colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),

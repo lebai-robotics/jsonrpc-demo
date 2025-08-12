@@ -146,6 +146,7 @@ class RobotProvider extends ChangeNotifier {
     String? newSceneId,
     String? imagePath,
     bool clearImagePath = false,
+    String? params,
   }) async {
     if (_robotConfig == null) return false;
 
@@ -168,6 +169,7 @@ class RobotProvider extends ChangeNotifier {
       sceneId: newSceneId,
       imagePath: imagePath,
       clearImagePath: clearImagePath,
+      params: params,
     );
 
     final updatedConfig = _robotConfig!.updateScene(sceneId, updatedScene);
@@ -199,11 +201,13 @@ class RobotProvider extends ChangeNotifier {
 
     try {
       print('[RobotProvider] 开始执行场景: ${scene.name}');
+      debugPrint('scene.params: ${scene.params}');
 
       await _rpcClient.startTask(
         _robotConfig!.ip,
         _robotConfig!.port,
         scene.sceneId,
+        scene.params,
       );
 
       print('[RobotProvider] 场景执行成功: ${scene.name}');

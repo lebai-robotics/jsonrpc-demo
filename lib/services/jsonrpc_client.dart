@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 /// JSON-RPC错误类
@@ -157,13 +158,23 @@ class JsonRpcClient {
   }
 
   /// 启动场景任务
-  Future<dynamic> startTask(String ip, int port, String taskName) async {
-    final taskParams = {
-      'name': taskName,
-      'is_parallel': false,
-      'loop_to': 1,
-      'dir': '',
-    };
+  Future<dynamic> startTask(
+    String ip,
+    int port,
+    String taskName,
+    String? params,
+  ) async {
+    final taskParams = params != null
+        ? {
+            'name': taskName,
+            'is_parallel': false,
+            'loop_to': 1,
+            'dir': '',
+            'params': [params],
+          }
+        : {'name': taskName, 'is_parallel': false, 'loop_to': 1, 'dir': ''};
+
+    debugPrint('params is String: ${params is String}. params: $params');
 
     return await sendRequest(ip, port, 'start_task', [taskParams]);
   }

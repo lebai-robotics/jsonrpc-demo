@@ -261,7 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// 计算网格列数
   int _calculateCrossAxisCount(double screenWidth) {
-    print('screenWidth: $screenWidth');
     if (screenWidth > 1200) {
       return 3; // 大屏幕显示3列
     } else if (screenWidth >= 800) {
